@@ -4,8 +4,9 @@ const path = require("path");
 const jimp = require('jimp');
 const TextToSVG = require('text-to-svg');
 const textToSVG = TextToSVG.loadSync();
-const svgToImg = require('svg-to-img')
 const images = require('images')
+const sharp = require("sharp")
+
 
 // 基础路径
 const imgBasePath = (value) => {
@@ -108,17 +109,41 @@ const options = {
 }
 const svgText = textToSVG.getSVG(curDate, options);
 
-// svg 转图片
-(async () => {
-    const image = await svgToImg.from(svgText).toPng({
-        path: "./logo.png"
-    });
-    // console.log(image); // 有返回值
+// // svg 转图片
+// (async () => {
+//     await svgToImg.from(svgText).toPng({
+//         path: "./logo.png"
+//     });
+//     // console.log(image); // 有返回值
+//
+//     // await handleImgJimp('./logo.png')
+//     // await handleImgImages('./logo.png')
+//     handleImgJimp1('./logo.png')
+// })();
 
-    // await handleImgJimp('./logo.png')
-    // await handleImgImages('./logo.png')
-    handleImgJimp1('./logo.png')
-})();
+//
+// console.log(svgText);
+
+
+/*
+*  sharp 可用于代替 svgToImg
+*  sharp 如果安装不上, 可以先在终端输入一下两行代码 , 更改为国内源
+*  npm config set sharp_binary_host "https://npmmirror.com/mirrors/sharp"
+*  npm config set sharp_libvips_binary_host "https://npmmirror.com/mirrors/sharp-libvips"
+*  npm install sharp
+*
+* */
+
+sharp(Buffer.from(svgText))
+    .png()
+    .toFile("logo.png")
+    .then(function (info) {
+        console.log(info)
+        handleImgJimp1('./logo.png')
+    })
+    .catch(function (err) {
+        console.log(err)
+    })
 
 // 测试 jimp
 function handleImgJimp(logo) {
